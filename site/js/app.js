@@ -281,7 +281,7 @@ function renderSpawns() {
 ["#spawnSearch", "#spawnType", "#spawnBiome"].forEach(s => $(s).addEventListener("input", renderSpawns));
 
 /* ---------- legendaries: picker + info panel ---------- */
-// Selection is remembered by NAME, so reordering in the admin panel can't show the wrong legendary.
+// Selection is remembered by NAME, so reordering in the staff site can't show the wrong legendary.
 let legSelected = "";
 function renderLegPicker() {
   const LEGENDS = DB.czLegendaries;
@@ -422,7 +422,7 @@ function setGroup(g, open) {
 groups.forEach(g => g.querySelector(".nav-parent").addEventListener("click", () => setGroup(g, !g.classList.contains("open"))));
 
 const views = ["home", "cozymon-about", "cozymon-features", "cozymon-faq", "spawns", "legendaries",
-               "oneblock-about", "oneblock-features", "oneblock-faq", "admin", "rules", "vote", "store"];
+               "oneblock-about", "oneblock-features", "oneblock-faq", "rules", "vote", "store"];
 const ALIASES = { features: "cozymon-features", faq: "cozymon-faq", about: "cozymon-about" }; // old links still work
 
 function show(name) {
@@ -437,7 +437,6 @@ function show(name) {
     g.classList.toggle("has-active", has);
     if (has) setGroup(g, true);
   });
-  if (name === "admin") renderAdmin();
   if (anchor) $("#" + anchor).scrollIntoView(); else window.scrollTo(0, 0);
   document.body.classList.remove("menu-open");
   $("#menuBtn").setAttribute("aria-expanded", "false");
@@ -461,3 +460,17 @@ $("#themeBtn").addEventListener("click", () => {
   root.dataset.theme = dark ? "light" : "dark";
   try { localStorage.setItem("floreon-theme", root.dataset.theme); } catch (e) {}
 });
+
+/* =====================================================
+   START-UP: show built-in content instantly, then swap in
+   the live content from Supabase as soon as it arrives.
+   (Editing happens on the separate staff site in admin/.)
+   ===================================================== */
+renderAll();
+show(location.hash.slice(1));
+(async () => {
+  if (!ONLINE) return;
+  const [ok] = await Promise.all([loadContent(), loadPosts()]);
+  renderAll();
+  if (!ok) console.warn("Floreon: showing built-in content because the database couldn't be reached.");
+})();

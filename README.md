@@ -11,7 +11,6 @@ site/                 PUBLIC SITE (floreon.garden) – plain HTML/CSS/JS, no bui
   js/config.js        Settings + starting content
   js/data.js          Everything that talks to Supabase
   js/app.js           Renders the public pages
-  js/admin.js         Old admin panel (#admin) – will be replaced by admin/
   images/             Logos, favicon, link preview
 admin/                ADMIN SITE (admin.floreon.garden) – plain JS modules, no build step
   index.html
@@ -34,7 +33,7 @@ netlify.toml          Netlify settings for the public site
 
 1. Open the folder in VS Code and install the recommended extensions when prompted (Live Server, Prettier, ESLint, GitLens).
 2. Right-click `site/index.html` > **Open with Live Server**. The page reloads every time you save.
-3. Without Supabase keys, the site shows the built-in content from `js/config.js` and the admin login is disabled. That's expected.
+3. Without Supabase keys, the site shows the built-in content from `js/config.js`. That's expected.
 
 ## Set up Supabase (one time)
 
@@ -48,7 +47,7 @@ netlify.toml          Netlify settings for the public site
    ```
 6. **Project Settings > API Keys**: copy the **Project URL** and the **Publishable key** (`sb_publishable_...`) into `SUPABASE` in `js/config.js`.
    Never use the **Secret key** (`sb_secret_...`) or the legacy `service_role` key in this project.
-7. Open the site, click the lock icon, log in, and you can edit everything. Sections you never edit keep showing the built-in content.
+7. Open the staff site (admin/), log in, and edit from there. The public site has no login link on purpose.
 
 ## Deploy to Netlify
 
@@ -73,7 +72,7 @@ Each site only redeploys when its own folder changes.
 - [ ] Review the Store perks against the Minecraft Usage Guidelines (kits, extra homes and priority join are the risky ones).
 - [ ] Set `oneblockEnabled: true` only when the Oneblock pages are ready.
 - [ ] Replace the placeholder team, vote sites and FAQ pictures.
-- [ ] Download a backup from the admin panel now and then.
+- [ ] Every change is kept in the staff site's History, so mistakes can be undone.
 
 ## Updating CSS or JS
 
@@ -81,11 +80,5 @@ When you change a file in `css/` or `js/`, also bump the `?v=` number on its lin
 
 ## Editing content
 
-| What | Where |
-|---|---|
-| News posts | Admin panel > Whole site > News posts |
-| FAQs, features, spawns, legendaries, series guide, About text | Admin panel > Cozymon (or Oneblock) |
-| Team, rules, vote sites, store ranks, payment methods | Admin panel > Whole site |
-| Discord link, banner pictures | `js/config.js` (then push) |
-
-Text fields that say "simple HTML allowed" are cleaned before display, so scripts and unsafe tags are removed automatically.
+Everything is edited on the staff site (`admin/`, e.g. admin.floreon.garden), which only staff accounts can log in to.
+Text fields with formatting are cleaned before display, so scripts and unsafe tags are removed automatically.
