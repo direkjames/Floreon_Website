@@ -65,8 +65,9 @@ let DB = clone(DEFAULTS);   // what the page currently shows
 let POSTS = [];             // news posts
 
 /* ---------- Supabase connection ---------- */
-const sb = (SUPABASE.url && SUPABASE.anonKey && window.supabase)
-  ? window.supabase.createClient(SUPABASE.url, SUPABASE.anonKey)
+const SB_KEY = SUPABASE.publishableKey || SUPABASE.anonKey || "";
+const sb = (SUPABASE.url && SB_KEY && window.supabase)
+  ? window.supabase.createClient(SUPABASE.url, SB_KEY)
   : null;
 const ONLINE = !!sb;
 if (!ONLINE) {

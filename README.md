@@ -32,8 +32,8 @@ netlify.toml          Netlify settings + security headers
    ```sql
    insert into public.admins (user_id, display_name) values ('PASTE-USER-UID', 'YourName');
    ```
-6. **Project Settings > API**: copy the **Project URL** and the **anon public** key into `SUPABASE` in `js/config.js`.
-   Never use the `service_role` key in this project.
+6. **Project Settings > API Keys**: copy the **Project URL** and the **Publishable key** (`sb_publishable_...`) into `SUPABASE` in `js/config.js`.
+   Never use the **Secret key** (`sb_secret_...`) or the legacy `service_role` key in this project.
 7. Open the site, click the lock icon, log in, and you can edit everything. Sections you never edit keep showing the built-in content.
 
 ## Deploy to Netlify

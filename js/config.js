@@ -19,14 +19,15 @@ const CONFIG = {
   oneblockEnabled: false      // set to true when the Oneblock pages are ready to show
 };
 
-/* Supabase connection. Find both values in Supabase: Project Settings > API.
-   The "anon" key is SAFE to put here: it is public by design, and the database
-   security rules (supabase/schema.sql) decide what it can do.
-   NEVER put the "service_role" key in this file.
-   Leave them empty to run the site with the built-in content below (no admin saving). */
+/* Supabase connection. Find both values in Supabase: Project Settings > API Keys.
+   The "publishable" key (starts with sb_publishable_) is SAFE to put here: it is public
+   by design, and the database security rules (supabase/schema.sql) decide what it can do.
+   A legacy "anon" key also works here.
+   NEVER put the "secret" key (sb_secret_...) or the legacy "service_role" key in this file.
+   Leave the key empty to run the site with the built-in content below (no admin saving). */
 const SUPABASE = {
-  url: "",                    // e.g. "https://abcdefghijklm.supabase.co"
-  anonKey: "",                // the long "anon public" key
+  url: "https://wvsjszvoengmjhnrksxw.supabase.co",
+  publishableKey: "",         // paste the sb_publishable_... key here
   imageBucket: "site-images"
 };
 

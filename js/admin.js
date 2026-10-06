@@ -151,7 +151,7 @@ function renderAdmin() {
     root.innerHTML = `
       <h2 class="section-title">Staff login</h2>
       <p class="section-lead">Log in with the staff account the owner created for you in Supabase.</p>
-      ${ONLINE ? "" : `<div class="notice">Supabase isn't connected yet. Fill in <code>SUPABASE.url</code> and <code>SUPABASE.anonKey</code> in <code>js/config.js</code> (see README.md).</div>`}
+      ${ONLINE ? "" : `<div class="notice">Supabase isn't connected yet. Fill in <code>SUPABASE.url</code> and <code>SUPABASE.publishableKey</code> in <code>js/config.js</code> (see README.md).</div>`}
       <form class="form" id="loginForm" novalidate style="max-width:420px">
         <label>Email<input name="email" type="email" autocomplete="username" required></label>
         <label>Password<input name="pass" type="password" autocomplete="current-password" required></label>
