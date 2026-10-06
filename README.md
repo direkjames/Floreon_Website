@@ -68,6 +68,16 @@ netlify.toml          Netlify settings for the public site
 
 Each site only redeploys when its own folder changes.
 
+## Domains (Namecheap DNS → Netlify)
+
+| Address | Netlify site | Namecheap record (Advanced DNS) |
+|---|---|---|
+| floreon.garden | public site | `ALIAS` · Host `@` · `apex-loadbalancer.netlify.com` |
+| www.floreon.garden | public site (redirects to floreon.garden) | `CNAME` · Host `www` · `floreon.netlify.app` |
+| admin.floreon.garden | staff site | `CNAME` · Host `admin` · `<staff-site-name>.netlify.app` |
+
+Remove Namecheap's default parking records first. Add each domain in Netlify under **Domain management**; Netlify issues the HTTPS certificates automatically once DNS points to it.
+
 ## Before going public
 
 - [x] Discord invite in `js/config.js` (set the invite to never expire in Discord).

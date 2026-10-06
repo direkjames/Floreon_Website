@@ -7,8 +7,8 @@ export const SUPABASE = {
   imageBucket: "site-images"
 };
 
-// Where "View site" links go. Change to https://floreon.garden once the domain is connected.
-export const PUBLIC_SITE = "https://floreon.netlify.app";
+// Where "View site" links go.
+export const PUBLIC_SITE = "https://floreon.garden";
 
 // Upload limits for the media library
 export const UPLOAD = {
