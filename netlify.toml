@@ -13,7 +13,7 @@
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(), microphone=(), geolocation=()"
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
 
 # CSS/JS: browsers must check for a new version on every visit, so deploys show up immediately.
 [[headers]]
@@ -24,3 +24,10 @@
   for = "/js/*"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
+
+# Every page address (/cozymon/faq, /rules, ...) is drawn by index.html.
+# Real files (css, js, images) are served first, so this only catches page addresses.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

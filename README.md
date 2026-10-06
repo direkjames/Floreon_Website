@@ -5,12 +5,14 @@ Plain HTML/CSS/JS site with a Supabase backend (database, staff logins, image st
 ## Project layout
 
 ```
-site/                 PUBLIC SITE (floreon.garden) – plain HTML/CSS/JS, no build step
-  index.html
+site/                 PUBLIC SITE (floreon.garden) – plain HTML/CSS/JS modules, no build step
+  index.html          Page shell (sidebar, top bar); pages are drawn into <main>
   css/styles.css
-  js/config.js        Settings + starting content
-  js/data.js          Everything that talks to Supabase
-  js/app.js           Renders the public pages
+  js/config.js        Supabase keys
+  js/main.js          Loads settings/menu/lists/news, draws pages, real page addresses
+  js/blocks.js        How each block type looks on the site
+  js/util.js          Small helpers (HTML cleaning, icons)
+  js/fallback.js      Built-in copy of the content, used only if the database is down (generated)
   images/             Logos, favicon, link preview
 admin/                ADMIN SITE (admin.floreon.garden) – plain JS modules, no build step
   index.html
@@ -24,7 +26,8 @@ supabase/sql/         Database setup, run in order in the Supabase SQL Editor
   001_base.sql          content, posts, staff, image bucket
   002_pages_media.sql   pages, media library, edit history
   003_seed_pages.sql    copies today's pages into the database (generated)
-tools/build-seed.mjs  Regenerates 003_seed_pages.sql (node tools/build-seed.mjs)
+tools/build-seed.mjs  Regenerates 003_seed_pages.sql and site/js/fallback.js (node tools/build-seed.mjs)
+tools/legacy/         The original built-in content the seed is made from
 docs/content-model.md Format of pages, blocks, settings and the menu
 netlify.toml          Netlify settings for the public site
 ```
@@ -33,7 +36,7 @@ netlify.toml          Netlify settings for the public site
 
 1. Open the folder in VS Code and install the recommended extensions when prompted (Live Server, Prettier, ESLint, GitLens).
 2. Right-click `site/index.html` > **Open with Live Server**. The page reloads every time you save.
-3. Without Supabase keys, the site shows the built-in content from `js/config.js`. That's expected.
+3. Page addresses like /cozymon/faq work in Live Server too (set up in .vscode/settings.json).
 
 ## Set up Supabase (one time)
 
@@ -70,13 +73,13 @@ Each site only redeploys when its own folder changes.
 - [x] Discord invite in `js/config.js` (set the invite to never expire in Discord).
 - [x] Logo images in `images/`.
 - [ ] Review the Store perks against the Minecraft Usage Guidelines (kits, extra homes and priority join are the risky ones).
-- [ ] Set `oneblockEnabled: true` only when the Oneblock pages are ready.
+- [ ] Publish the Oneblock pages (they're drafts) and add them to the Menu when they're ready.
 - [ ] Replace the placeholder team, vote sites and FAQ pictures.
 - [ ] Every change is kept in the staff site's History, so mistakes can be undone.
 
 ## Updating CSS or JS
 
-When you change a file in `css/` or `js/`, also bump the `?v=` number on its line in `site/index.html` (for example `?v=4` to `?v=5`). That makes every visitor's browser load the new file.
+When you change `css/styles.css` or `js/main.js`, bump the `?v=` number on its line in `site/index.html` (for example `?v=6` to `?v=7`). The other JS files are re-checked on every visit (see netlify.toml).
 
 ## Editing content
 

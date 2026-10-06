@@ -471,3 +471,60 @@ html.no-oneblock .gm-grid { grid-template-columns: 1fr; max-width: 480px; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-delay: 0s !important; transition-duration: .01ms !important; }
   .petals { display: none; }
 }
+
+/* =====================================================
+   PAGES BUILT FROM BLOCKS
+   ===================================================== */
+.skip { position: absolute; left: -9999px; top: 8px; z-index: 100; background: var(--panel); padding: 10px 16px; border-radius: 12px; }
+.skip:focus { left: 12px; }
+#page { outline: none; }
+.page-loading { min-height: 60vh; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.page-loading span { width: 12px; height: 12px; border-radius: 50%; background: var(--accent); animation: pulse 1s ease-in-out infinite; }
+.page-loading span:nth-child(2) { animation-delay: .15s; }
+.page-loading span:nth-child(3) { animation-delay: .3s; }
+@keyframes pulse { 50% { transform: scale(.5); opacity: .4; } }
+body.ready #page > .wrap, body.ready #page > .blk { animation: fade .5s ease both; }
+
+/* spacing between blocks: sections start with a heading */
+.blk + .blk { margin-top: 28px; }
+.blk + .blk-heading { margin-top: 72px; }
+.blk > :first-child { margin-top: 0; }
+.heading.center { text-align: center; }
+.heading.center .section-lead { margin-inline: auto; }
+.hero-title { font-size: clamp(2.4rem, 7vw, 4.4rem); line-height: 1.1 !important; text-shadow: 0 4px 0 rgba(120, 50, 100, .35); }
+.blk-hero .hero:not(.cat-hero) { min-height: 78vh; }
+
+/* rich text written in the staff site */
+.prose { color: var(--muted); max-width: 70ch; }
+.prose > * + * { margin-top: 12px; }
+.prose strong, .prose b { color: var(--ink); }
+.prose a { color: var(--accent); font-weight: 700; }
+.prose ul, .prose ol { padding-left: 22px; margin-bottom: 0; }
+.prose li + li { margin-top: 6px; }
+.prose code, .step-text code, .rule-text code { background: var(--bg); color: var(--ink); padding: 2px 8px; border-radius: 8px; font-size: .9em; }
+.prose img, .faq-body img, .step-text img, .post-text img { max-width: 100%; height: auto; border-radius: 16px; display: block; margin: 8px 0 14px; }
+.about-card.prose { max-width: 760px; margin-top: 0; }
+.step-text, .rule-text { color: var(--muted); font-size: .98rem; }
+.step-text p + p, .rule-text p + p, .faq-body p + p { margin-top: 10px; }
+.ph { display: none; }
+
+.pic { margin: 0; max-width: 760px; }
+.pic.wide { max-width: 100%; }
+.pic.full { max-width: none; margin-inline: -36px; }
+.pic img { width: 100%; height: auto; display: block; border-radius: 22px; box-shadow: var(--shadow); }
+.pic.full img { border-radius: 0; }
+.pic figcaption { margin-top: 10px; color: var(--muted); font-size: .92rem; text-align: center; }
+.gallery.small { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); margin-top: 12px; }
+.btn-row { display: flex; flex-wrap: wrap; gap: 12px; }
+.btn-row.center { justify-content: center; }
+.gm-card span::after { content: " ›"; }
+.plan.moss { --c: var(--check); }
+.not-found { text-align: center; min-height: 60vh; display: grid; place-content: center; gap: 14px; }
+.not-found .section-lead { margin-inline: auto; }
+.member svg.head { width: 84px; height: 84px; border-radius: 20px; margin-bottom: 14px; }
+.vote button.btn { align-self: flex-start; margin-top: auto; }
+.lightbox img[src=""] { display: none; }
+@media (max-width: 820px) {
+  .pic.full { margin-inline: -20px; }
+  .blk + .blk-heading { margin-top: 56px; }
+}
