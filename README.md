@@ -5,27 +5,34 @@ Plain HTML/CSS/JS site with a Supabase backend (database, staff logins, image st
 ## Project layout
 
 ```
-index.html            Page structure
-css/styles.css        All styling
-js/config.js          Settings (server IP, Discord, Supabase keys) + starting content
-js/data.js            Everything that talks to Supabase
-js/app.js             Renders the public pages
-js/admin.js           Admin panel (#admin) + start-up code
-images/               Put floreon-logo.png and floreon-word.png here
-supabase/schema.sql   Database tables + security rules (run once in Supabase)
-netlify.toml          Netlify settings + security headers
+site/                 PUBLIC SITE (floreon.garden) – plain HTML/CSS/JS, no build step
+  index.html
+  css/styles.css
+  js/config.js        Settings + starting content
+  js/data.js          Everything that talks to Supabase
+  js/app.js           Renders the public pages
+  js/admin.js         Old admin panel (#admin) – will be replaced by admin/
+  images/             Logos, favicon, link preview
+admin/                ADMIN SITE (admin.floreon.garden) – Vue + Vite (coming in phase 2)
+supabase/sql/         Database setup, run in order in the Supabase SQL Editor
+  001_base.sql          content, posts, staff, image bucket
+  002_pages_media.sql   pages, media library, edit history
+  003_seed_pages.sql    copies today's pages into the database (generated)
+tools/build-seed.mjs  Regenerates 003_seed_pages.sql (node tools/build-seed.mjs)
+docs/content-model.md Format of pages, blocks, settings and the menu
+netlify.toml          Netlify settings for the public site
 ```
 
 ## Run it locally (VS Code)
 
 1. Open the folder in VS Code and install the recommended extensions when prompted (Live Server, Prettier, ESLint, GitLens).
-2. Right-click `index.html` > **Open with Live Server**. The page reloads every time you save.
+2. Right-click `site/index.html` > **Open with Live Server**. The page reloads every time you save.
 3. Without Supabase keys, the site shows the built-in content from `js/config.js` and the admin login is disabled. That's expected.
 
 ## Set up Supabase (one time)
 
 1. Create a project at supabase.com. Pick the region closest to your players (Singapore for the Philippines).
-2. **SQL Editor > New query**, paste all of `supabase/schema.sql`, click **Run**.
+2. **SQL Editor > New query**: run `supabase/sql/001_base.sql`, then `002_pages_media.sql`, then `003_seed_pages.sql` (one at a time: paste, **Run**, next). "Does not exist, skipping" notices are normal.
 3. **Authentication > Sign In / Providers**: turn **off** "Allow new users to sign up". Only you should create accounts.
 4. **Authentication > Users > Add user**: create an account for each staff member (email + password, tick "Auto confirm").
 5. Copy each staff member's **User UID** and run this in the SQL Editor:
@@ -39,7 +46,7 @@ netlify.toml          Netlify settings + security headers
 ## Deploy to Netlify
 
 1. Push this folder to a GitHub repo.
-2. Netlify > **Add new site > Import an existing project** > pick the repo. Leave the build command empty; publish directory is `.` (already set in `netlify.toml`).
+2. Netlify > **Add new site > Import an existing project** > pick the repo. Leave the build command empty; the publish folder (`site`) is set in `netlify.toml`.
 3. Every push to `main` redeploys automatically.
 4. Add your domain under **Domain management**, then in Supabase **Authentication > URL Configuration** set the Site URL to it.
 
@@ -54,7 +61,7 @@ netlify.toml          Netlify settings + security headers
 
 ## Updating CSS or JS
 
-When you change a file in `css/` or `js/`, also bump the `?v=` number on its line in `index.html` (for example `?v=4` to `?v=5`). That makes every visitor's browser load the new file.
+When you change a file in `css/` or `js/`, also bump the `?v=` number on its line in `site/index.html` (for example `?v=4` to `?v=5`). That makes every visitor's browser load the new file.
 
 ## Editing content
 

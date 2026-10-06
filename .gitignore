@@ -2,6 +2,7 @@
 Thumbs.db
 .vscode/*
 !.vscode/extensions.json
+!.vscode/settings.json
 .netlify/
 node_modules/
 *.log

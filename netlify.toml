@@ -1,6 +1,9 @@
-# Netlify settings – no build step, the site is plain HTML/CSS/JS.
+# PUBLIC SITE (floreon.garden) – plain HTML/CSS/JS in site/, no build step.
+# The admin site has its own settings in admin/netlify.toml.
 [build]
-  publish = "."
+  publish = "site"
+  # Skip a deploy when a push only changed the admin site or docs.
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- site netlify.toml"
 
 # Security headers for every page.
 [[headers]]
@@ -21,10 +24,3 @@
   for = "/js/*"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
-
-# Keep the database setup file off the live site.
-[[redirects]]
-  from = "/supabase/*"
-  to = "/404"
-  status = 404
-  force = true
