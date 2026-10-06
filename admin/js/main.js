@@ -1,0 +1,100 @@
+// Admin site entry point: login check, sidebar, and switching between screens (#/media, #/pages, ...).
+import { $, $$, html, raw, list, icon, toast, errText } from "./lib/ui.js";
+import { sb, currentStaff, signOut } from "./lib/sb.js";
+import { PUBLIC_SITE } from "./config.js";
+import { renderLogin } from "./views/login.js";
+import { renderDashboard } from "./views/dashboard.js";
+import { renderMedia } from "./views/media.js";
+import { renderSoon } from "./views/soon.js";
+
+const soon = (title, text) => root => renderSoon(root, { title, text });
+
+// Sidebar sections. `route` is the address after #/
+const NAV = [
+  { items: [{ route: "", label: "Dashboard", icon: "home", view: renderDashboard }] },
+  { label: "Content", items: [
+    { route: "pages", label: "Pages", icon: "pages", view: soon("Pages", "Create pages and build them from blocks.") },
+    { route: "menu", label: "Menu", icon: "menu", view: soon("Menu", "Choose which pages appear in the sidebar, and in what order.") },
+    { route: "news", label: "News", icon: "news", view: soon("News", "Write, pin and schedule posts for the home page.") }
+  ]},
+  { label: "Lists", items: [
+    { route: "store", label: "Store ranks", icon: "store", view: soon("Store ranks", "Ranks, prices, colors and perks.") },
+    { route: "payments", label: "Payment methods", icon: "card", view: soon("Payment methods", "The payment options shown in the store.") },
+    { route: "team", label: "Team", icon: "users", view: soon("Team", "Staff members shown on the home page.") },
+    { route: "spawns", label: "Spawns", icon: "ball", view: soon("Spawns", "Paradox and Ultra Beast spawn requirements.") },
+    { route: "legendaries", label: "Legendaries", icon: "star", view: soon("Legendaries", "How to get each legendary, with pictures.") }
+  ]},
+  { label: "Library", items: [{ route: "media", label: "Media", icon: "image", view: renderMedia }] },
+  { label: "Site", items: [
+    { route: "settings", label: "Settings", icon: "settings", view: soon("Settings", "Server name, tagline, Discord link, logos and currency.") },
+    { route: "history", label: "History", icon: "history", view: soon("History", "See and restore earlier versions of pages and lists.") }
+  ]}
+];
+const ROUTES = NAV.flatMap(g => g.items);
+
+let staff = null;
+const app = $("#app");
+
+function shell() {
+  app.innerHTML = html`
+    <div class="layout">
+      <aside class="side" id="side" aria-label="Admin menu">
+        <a class="brand" href="#/"><img src="images/floreon-logo.webp" alt="" width="34" height="34"><span>Floreon<small>Staff</small></span></a>
+        <nav class="nav">${list(NAV, g => html`
+          <div class="nav-group">
+            ${g.label ? raw(html`<p class="nav-label">${g.label}</p>`) : ""}
+            ${list(g.items, it => html`<a href="#/${it.route}" data-route="${it.route}">${raw(icon(it.icon))}<span>${it.label}</span></a>`)}
+          </div>`)}
+        </nav>
+        <div class="side-foot">
+          <p class="who">${staff.name}<small>${staff.email}</small></p>
+          <a class="side-link" href="${PUBLIC_SITE}" target="_blank" rel="noopener">${raw(icon("external"))}View site</a>
+          <button class="side-link" type="button" id="logout">${raw(icon("logout"))}Log out</button>
+        </div>
+      </aside>
+      <div class="scrim" id="scrim"></div>
+      <div class="main-wrap">
+        <header class="topbar">
+          <button class="icon-btn" id="menuBtn" type="button" aria-label="Open menu" aria-expanded="false">${raw(icon("menu"))}</button>
+          <a class="brand" href="#/"><img src="images/floreon-logo.webp" alt="" width="28" height="28"><span>Floreon<small>Staff</small></span></a>
+        </header>
+        <main class="main" id="view" tabindex="-1"></main>
+      </div>
+    </div>`;
+  $("#logout").addEventListener("click", async () => { await signOut(); staff = null; location.hash = "#/"; start(); });
+  const setMenu = open => { document.body.classList.toggle("menu-open", open); $("#menuBtn").setAttribute("aria-expanded", open); };
+  $("#menuBtn").addEventListener("click", () => setMenu(!document.body.classList.contains("menu-open")));
+  $("#scrim").addEventListener("click", () => setMenu(false));
+}
+
+async function route() {
+  if (!staff) return;
+  const path = location.hash.replace(/^#\/?/, "");
+  const top = path.split("/")[0];
+  const r = ROUTES.find(x => x.route === top) || ROUTES[0];
+  $$("#side .nav a").forEach(a => a.classList.toggle("active", a.dataset.route === r.route));
+  document.title = `${r.label} – Floreon staff`;
+  document.body.classList.remove("menu-open");
+  const view = $("#view");
+  view.innerHTML = "";
+  window.scrollTo(0, 0);
+  try { await r.view(view, { staff, path }); }
+  catch (e) { console.error(e); view.innerHTML = html`<div class="panel"><h1>Something went wrong</h1><p>${errText(e)}</p><p>Reload the page to try again.</p></div>`; }
+  view.focus({ preventScroll: true });
+}
+
+async function start() {
+  try { staff = await currentStaff(); }
+  catch (e) { staff = null; }
+  if (!staff) {
+    document.title = "Log in – Floreon staff";
+    return renderLogin(app, s => { staff = s; toast(`Welcome, ${s.name}!`); shell(); route(); });
+  }
+  shell();
+  route();
+}
+
+window.addEventListener("hashchange", route);
+// If the login expires or someone logs out in another tab, go back to the login screen.
+sb.auth.onAuthStateChange(evt => { if (evt === "SIGNED_OUT" && staff) { staff = null; start(); } });
+start();

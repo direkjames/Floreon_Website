@@ -13,7 +13,14 @@ site/                 PUBLIC SITE (floreon.garden) – plain HTML/CSS/JS, no bui
   js/app.js           Renders the public pages
   js/admin.js         Old admin panel (#admin) – will be replaced by admin/
   images/             Logos, favicon, link preview
-admin/                ADMIN SITE (admin.floreon.garden) – Vue + Vite (coming in phase 2)
+admin/                ADMIN SITE (admin.floreon.garden) – plain JS modules, no build step
+  index.html
+  css/admin.css
+  js/config.js        Supabase keys + public site address
+  js/main.js          Login check, sidebar, screen switching
+  js/lib/             ui.js (helpers, dialogs, icons), sb.js (all database calls)
+  js/views/           One file per screen (dashboard, media, …)
+  netlify.toml        Netlify settings for the admin site
 supabase/sql/         Database setup, run in order in the Supabase SQL Editor
   001_base.sql          content, posts, staff, image bucket
   002_pages_media.sql   pages, media library, edit history
@@ -49,6 +56,15 @@ netlify.toml          Netlify settings for the public site
 2. Netlify > **Add new site > Import an existing project** > pick the repo. Leave the build command empty; the publish folder (`site`) is set in `netlify.toml`.
 3. Every push to `main` redeploys automatically.
 4. Add your domain under **Domain management**, then in Supabase **Authentication > URL Configuration** set the Site URL to it.
+
+## Admin site (second Netlify site)
+
+1. Netlify > **Add new site > Import an existing project** > pick the same repo.
+2. Set **Base directory** to `admin`. Leave the build command empty; publish `.` is set in `admin/netlify.toml`.
+3. Deploy. Log in with the same staff email and password as before.
+4. Locally: right-click `admin/index.html` > **Open with Live Server**.
+
+Each site only redeploys when its own folder changes.
 
 ## Before going public
 
