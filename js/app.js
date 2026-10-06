@@ -7,10 +7,8 @@ document.querySelectorAll("[data-server-name]").forEach(el => el.textContent = C
 document.title = CONFIG.serverName + " – Minecraft Server";
 $("#tagline").textContent = CONFIG.tagline;
 $("#discordLink").href = CONFIG.discordURL;
-$("#heroDiscord").href = CONFIG.discordURL;
-if (CONFIG.serverIP) { $("#ipText").textContent = CONFIG.serverIP; $("#ipBtn").hidden = false; }
 $("#applyBtn").href = CONFIG.discordURL;
-if (CONFIG.modpackURL) { const ml = $("#modpackLink"); ml.href = CONFIG.modpackURL; ml.hidden = false; }
+$("#buyDiscord").href = CONFIG.discordURL;
 document.documentElement.classList.toggle("no-oneblock", !CONFIG.oneblockEnabled);
 
 /* ---------- toast ---------- */
@@ -22,18 +20,6 @@ function toast(msg) {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => t.classList.remove("show"), 2600);
 }
-
-/* ---------- copy IP ---------- */
-$("#ipBtn").addEventListener("click", async () => {
-  try {
-    await navigator.clipboard.writeText(CONFIG.serverIP);
-    toast("Server IP copied!");
-  } catch (e) {
-    const r = document.createRange(); r.selectNodeContents($("#ipText"));
-    const s = getSelection(); s.removeAllRanges(); s.addRange(r);
-    toast("Press Ctrl+C to copy the IP");
-  }
-});
 
 /* ---------- hero carousel ---------- */
 const SCENES = [
@@ -455,6 +441,7 @@ function show(name) {
   if (anchor) $("#" + anchor).scrollIntoView(); else window.scrollTo(0, 0);
   document.body.classList.remove("menu-open");
   $("#menuBtn").setAttribute("aria-expanded", "false");
+  $("#buyModal").classList.remove("open");
 }
 window.addEventListener("hashchange", () => show(location.hash.slice(1)));
 

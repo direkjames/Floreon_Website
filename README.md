@@ -45,12 +45,16 @@ netlify.toml          Netlify settings + security headers
 
 ## Before going public
 
-- [ ] Fill in `CONFIG` in `js/config.js` (server IP, Discord invite, modpack link).
-- [ ] Add the two logo images to `images/`.
+- [x] Discord invite in `js/config.js` (set the invite to never expire in Discord).
+- [x] Logo images in `images/`.
 - [ ] Review the Store perks against the Minecraft Usage Guidelines (kits, extra homes and priority join are the risky ones).
 - [ ] Set `oneblockEnabled: true` only when the Oneblock pages are ready.
 - [ ] Replace the placeholder team, vote sites and FAQ pictures.
 - [ ] Download a backup from the admin panel now and then.
+
+## Updating CSS or JS
+
+When you change a file in `css/` or `js/`, also bump the `?v=` number on its line in `index.html` (for example `?v=4` to `?v=5`). That makes every visitor's browser load the new file.
 
 ## Editing content
 
@@ -59,6 +63,6 @@ netlify.toml          Netlify settings + security headers
 | News posts | Admin panel > Whole site > News posts |
 | FAQs, features, spawns, legendaries, series guide, About text | Admin panel > Cozymon (or Oneblock) |
 | Team, rules, vote sites, store ranks, payment methods | Admin panel > Whole site |
-| Server IP, Discord link, banner pictures | `js/config.js` (then push) |
+| Discord link, banner pictures | `js/config.js` (then push) |
 
 Text fields that say "simple HTML allowed" are cleaned before display, so scripts and unsafe tags are removed automatically.
