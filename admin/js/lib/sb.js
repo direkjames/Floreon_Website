@@ -204,3 +204,22 @@ export async function savePost(post) {
   return must(await sb.from("posts").insert({ ...row, author_name: post.author_name || null }).select().single()).id;
 }
 export const deletePost = async id => must(await sb.from("posts").delete().eq("id", id));
+
+/* ---------- history (restore earlier versions) ---------- */
+export const listHistory = async (n = 80) =>
+  must(await sb.from("edit_history").select("id, item_type, item_key, action, snapshot, changed_at").order("changed_at", { ascending: false }).limit(n));
+
+// Put an old version back. Restoring also saves the current version to history first (the database does that).
+export async function restoreHistory(entry) {
+  const snap = entry.snapshot;
+  if (entry.item_type === "content") {
+    must(await sb.from("content").upsert({ key: snap.key, data: snap.data }));
+    return;
+  }
+  const fields = { title: snap.title, slug: snap.slug, description: snap.description || "", published: !!snap.published, blocks: snap.blocks || [], sort: snap.sort ?? 0 };
+  const exists = must(await sb.from("pages").select("id").eq("id", snap.id).maybeSingle());
+  try {
+    if (exists) must(await sb.from("pages").update(fields).eq("id", snap.id));
+    else must(await sb.from("pages").insert({ id: snap.id, ...fields }));
+  } catch (e) { throw friendlySlugError(e); }
+}

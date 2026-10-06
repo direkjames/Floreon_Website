@@ -59,10 +59,10 @@ Text fields marked **HTML** allow simple formatting (`<p> <strong> <em> <a> <ul>
 ## Shared lists (`content` table)
 
 - `siteTeam`: `[{ name, role, row, mc?, head? }]`. `row` groups members into lines; `mc` = Minecraft username for the skin; `head` = custom image URL.
-- `sitePlans`: `[{ id (dahlia/hibiscus/sakura or a hex color), name, price, perks[] (HTML) }]`
+- `sitePlans`: `[{ id (card color: dahlia/hibiscus/sakura/moss), name, price, perks[] }]`
 - `sitePayments`: `[{ name, color, logo }]`
 - `czSpawns`: `[{ name, kind (paradox/ultra), cond[], biomes[], blocks[] }]`
-- `czLegendaries`: `[{ name, structure (bool), paras[] (HTML), images[], cond[], biomes[], blocks[] }]`
+- `czLegendaries`: `[{ name, structure (bool), html (HTML: how to get it), images[], cond[], biomes[], blocks[] }]`. Older entries may only have `paras[]` (one HTML paragraph each); the admin also keeps `paras[]` filled for the old public site until Phase 4 ships.
 
 ## `siteSettings`
 

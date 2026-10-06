@@ -26,6 +26,8 @@ export function renderField(s, value, path) {
   switch (s.type) {
     case "textarea":
       return html`<label>${s.label} ${help(s)}<textarea data-path="${p}" data-kind="text" rows="${s.rows || 3}" placeholder="${s.placeholder || ""}">${value ?? ""}</textarea></label>`;
+    case "color":
+      return html`<label class="color-field">${s.label} ${help(s)}<input type="color" data-path="${p}" data-kind="text" value="${/^#[0-9a-f]{6}$/i.test(value || "") ? value : "#e58aa8"}"></label>`;
     case "datetime":
       return html`<label>${s.label} ${help(s)}<input type="datetime-local" data-path="${p}" data-kind="text" value="${value ?? ""}"></label>`;
     case "number":
@@ -76,7 +78,7 @@ function itemTitle(s, item, i) {
 }
 function repeater(s, items, p) {
   return html`<div class="field repeater">
-    <span class="field-label">${s.label} ${raw(html`<small>${items.length} ${s.itemName || "item"}${items.length === 1 ? "" : "s"}</small>`)}</span>
+    <span class="field-label">${s.label} ${raw(html`<small>${items.length} ${items.length === 1 ? (s.itemName || "item") : (s.itemPlural || (s.itemName || "item") + "s")}</small>`)}</span>
     <ol class="rep-list">${list(items, (item, i) => html`
       <li class="rep-item" data-open-key="${p}.${i}">
         <div class="rep-head">
@@ -108,6 +110,10 @@ function richtext(p, value) {
     <textarea class="rt-src" data-path="${p}" data-kind="text" rows="8" hidden>${value ?? ""}</textarea>
   </div>`;
 }
+
+// A new, empty repeater item with each field's starting value
+export const freshItem = spec => Object.fromEntries(spec.fields.filter(f => f.type !== "note").map(f => [f.k,
+  f.type === "toggle" ? false : ["tags", "list", "lines", "images", "repeater"].includes(f.type) ? [] : f.type === "select" ? f.options[0][0] : ""]));
 
 /* ---------- wiring: keep `state` in sync and handle field buttons ----------
    opts.onChange()               called after any value change (mark unsaved)
@@ -171,17 +177,17 @@ export function bindFields(root, getState, { onChange, rerender, specFor }) {
       [arr[i], arr[j]] = [arr[j], arr[i]]; onChange(); rerender({ open: `${path}.${j}` });
     }
     if (act === "del" && Array.isArray(arr)) {
-      const ok = typeof arr[i] === "string" || !Object.values(arr[i] || {}).some(v => (Array.isArray(v) ? v.length : v))
-        || await confirmDialog("Delete this item?", "It will be removed when you save the page.", { yes: "Delete" });
+      const spec = specFor(path);
+      const untouched = spec?.fields && JSON.stringify(arr[i]) === JSON.stringify(freshItem(spec));
+      const ok = typeof arr[i] === "string" || untouched || !Object.values(arr[i] || {}).some(v => (Array.isArray(v) ? v.length : v))
+        || await confirmDialog("Delete this item?", "It will be removed when you save.", { yes: "Delete" });
       if (!ok) return;
       arr.splice(i, 1); onChange(); rerender();
     }
     if (act === "add-item") {
       const spec = specFor(path);
-      const fresh = Object.fromEntries(spec.fields.filter(f => f.type !== "note").map(f => [f.k,
-        f.type === "toggle" ? false : ["tags", "list", "lines", "images", "repeater"].includes(f.type) ? [] : f.type === "select" ? f.options[0][0] : ""]));
       const list = getPath(state, path) || [];
-      list.push(fresh); setPath(state, path, list); onChange();
+      list.push(freshItem(spec)); setPath(state, path, list); onChange();
       rerender({ open: `${path}.${list.length - 1}`, focus: true });
     }
   });

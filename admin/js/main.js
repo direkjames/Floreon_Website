@@ -5,13 +5,13 @@ import { PUBLIC_SITE } from "./config.js";
 import { renderLogin } from "./views/login.js";
 import { renderDashboard } from "./views/dashboard.js";
 import { renderMedia } from "./views/media.js";
-import { renderSoon } from "./views/soon.js";
 import { renderPages } from "./views/pages.js";
 import { renderMenu } from "./views/menu.js";
 import { renderNews } from "./views/news.js";
 import { renderSettings } from "./views/settings.js";
+import { renderStore, renderPayments, renderTeam, renderSpawns, renderLegendaries } from "./views/lists.js";
+import { renderHistory } from "./views/history.js";
 
-const soon = (title, text) => root => renderSoon(root, { title, text });
 
 // Sidebar sections. `route` is the address after #/
 const NAV = [
@@ -22,16 +22,16 @@ const NAV = [
     { route: "news", label: "News", icon: "news", view: renderNews }
   ]},
   { label: "Lists", items: [
-    { route: "store", label: "Store ranks", icon: "store", view: soon("Store ranks", "Ranks, prices, colors and perks.") },
-    { route: "payments", label: "Payment methods", icon: "card", view: soon("Payment methods", "The payment options shown in the store.") },
-    { route: "team", label: "Team", icon: "users", view: soon("Team", "Staff members shown on the home page.") },
-    { route: "spawns", label: "Spawns", icon: "ball", view: soon("Spawns", "Paradox and Ultra Beast spawn requirements.") },
-    { route: "legendaries", label: "Legendaries", icon: "star", view: soon("Legendaries", "How to get each legendary, with pictures.") }
+    { route: "store", label: "Store ranks", icon: "store", view: renderStore },
+    { route: "payments", label: "Payment methods", icon: "card", view: renderPayments },
+    { route: "team", label: "Team", icon: "users", view: renderTeam },
+    { route: "spawns", label: "Spawns", icon: "ball", view: renderSpawns },
+    { route: "legendaries", label: "Legendaries", icon: "star", view: renderLegendaries }
   ]},
   { label: "Library", items: [{ route: "media", label: "Media", icon: "image", view: renderMedia }] },
   { label: "Site", items: [
     { route: "settings", label: "Settings", icon: "settings", view: renderSettings },
-    { route: "history", label: "History", icon: "history", view: soon("History", "See and restore earlier versions of pages and lists.") }
+    { route: "history", label: "History", icon: "history", view: renderHistory }
   ]}
 ];
 const ROUTES = NAV.flatMap(g => g.items);

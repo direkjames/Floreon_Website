@@ -25,7 +25,9 @@ export function specAt(specs, path) {
    toForm(value)         convert stored data into what the form edits (e.g. ms -> seconds)
    prepare(value)        clean up / convert back before saving (return the value to save)
    onAction(btn, state, api)  custom [data-act] buttons not handled by fields
-   aside                 extra html shown under the editor (tips) */
+   aside                 extra html shown under the editor (tips)
+   search                placeholder text; adds a search box that filters list items
+   intro                 html shown above the editor (warnings, tips) */
 export async function contentEditor(root, opt) {
   root.innerHTML = `<p class="loading">Loading…</p>`;
   let data;
@@ -45,9 +47,12 @@ export async function contentEditor(root, opt) {
         <button type="button" class="btn" id="saveBtn" disabled>Save</button>
       </div>
     </div>
+    ${opt.intro ? raw(html`<div class="notice">${raw(opt.intro)}</div>`) : ""}
+    ${opt.search ? raw(html`<div class="toolbar"><label class="search">${raw(icon("search"))}<input type="search" id="edSearch" placeholder="${opt.search}" aria-label="${opt.search}"></label><span class="count" id="edCount"></span></div>`) : ""}
     <div class="panel stack" id="edBody"></div>
     ${opt.aside ? raw(html`<div class="hint">${raw(opt.aside)}</div>`) : ""}`;
   const body = $("#edBody", root);
+  $("#edSearch", root)?.addEventListener("input", () => filter());
 
   const markDirty = () => {
     const d = dirty();
@@ -61,6 +66,21 @@ export async function contentEditor(root, opt) {
     body.innerHTML = opt.body ? opt.body(state) : renderFields(specs(), state);
     reopen(body, [...keep, ...[].concat(open)].filter(Boolean), focus);
     if (!focus) window.scrollTo(0, y);
+    filter();
+  };
+  // search box for long lists: hides items whose title doesn't match
+  const filter = () => {
+    const q = ($("#edSearch", root)?.value || "").trim().toLowerCase();
+    if (!opt.search) return;
+    let shown = 0, total = 0;
+    body.querySelectorAll(".rep-list > .rep-item").forEach(li => {
+      total++;
+      // match the item title and what's typed in its fields (not labels or help text)
+      const hit = !q || li.querySelector(".rep-title").textContent.toLowerCase().includes(q)
+        || [...li.querySelectorAll("input:not([type=checkbox]):not([type=color]), textarea, .rt-area")].some(i => (i.value ?? i.textContent).toLowerCase().includes(q));
+      li.hidden = !hit; if (hit) shown++;
+    });
+    $("#edCount", root).textContent = q ? `${shown} of ${total}` : `${total} total`;
   };
   const api = { get state() { return state; }, set state(v) { state = v; }, draw, markDirty, root };
 
