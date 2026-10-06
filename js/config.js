@@ -27,7 +27,7 @@ const CONFIG = {
    Leave the key empty to run the site with the built-in content below (no admin saving). */
 const SUPABASE = {
   url: "https://wvsjszvoengmjhnrksxw.supabase.co",
-  publishableKey: "",         // paste the sb_publishable_... key here
+  publishableKey: "sb_publishable_Lb_s7UI4vUOWOLqg3ZftTA_qf6Y3gi-",
   imageBucket: "site-images"
 };
 
