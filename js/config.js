@@ -6,8 +6,8 @@
 const CONFIG = {
   serverName: "Floreon",
   tagline: "A cozy Minecraft community for building, exploring, and making friends.",
-  serverIP: "play.yourserver.net",
-  discordURL: "https://discord.gg/your-invite",
+  serverIP: "",                // leave empty to keep the IP private (it ships inside the modpack)
+  discordURL: "https://discord.gg/WmRzBww3hh",
   modpackURL: "",             // link to your modpack download (shown in step 3 of the whitelist guide)
   currency: "₱",
   // Hero carousel pictures. Add your own screenshots, e.g. ["images/spawn.jpg", "images/spring.jpg"]

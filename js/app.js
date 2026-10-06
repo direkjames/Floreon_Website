@@ -6,8 +6,9 @@
 document.querySelectorAll("[data-server-name]").forEach(el => el.textContent = CONFIG.serverName);
 document.title = CONFIG.serverName + " – Minecraft Server";
 $("#tagline").textContent = CONFIG.tagline;
-$("#ipText").textContent = CONFIG.serverIP;
 $("#discordLink").href = CONFIG.discordURL;
+$("#heroDiscord").href = CONFIG.discordURL;
+if (CONFIG.serverIP) { $("#ipText").textContent = CONFIG.serverIP; $("#ipBtn").hidden = false; }
 $("#applyBtn").href = CONFIG.discordURL;
 if (CONFIG.modpackURL) { const ml = $("#modpackLink"); ml.href = CONFIG.modpackURL; ml.hidden = false; }
 document.documentElement.classList.toggle("no-oneblock", !CONFIG.oneblockEnabled);
