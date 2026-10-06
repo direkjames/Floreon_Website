@@ -26,6 +26,8 @@ export function renderField(s, value, path) {
   switch (s.type) {
     case "textarea":
       return html`<label>${s.label} ${help(s)}<textarea data-path="${p}" data-kind="text" rows="${s.rows || 3}" placeholder="${s.placeholder || ""}">${value ?? ""}</textarea></label>`;
+    case "datetime":
+      return html`<label>${s.label} ${help(s)}<input type="datetime-local" data-path="${p}" data-kind="text" value="${value ?? ""}"></label>`;
     case "number":
       return html`<label>${s.label} ${help(s)}<input type="number" data-path="${p}" data-kind="number" value="${value ?? ""}" min="${s.min ?? ""}" max="${s.max ?? ""}"></label>`;
     case "select":

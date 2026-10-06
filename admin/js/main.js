@@ -7,6 +7,9 @@ import { renderDashboard } from "./views/dashboard.js";
 import { renderMedia } from "./views/media.js";
 import { renderSoon } from "./views/soon.js";
 import { renderPages } from "./views/pages.js";
+import { renderMenu } from "./views/menu.js";
+import { renderNews } from "./views/news.js";
+import { renderSettings } from "./views/settings.js";
 
 const soon = (title, text) => root => renderSoon(root, { title, text });
 
@@ -15,8 +18,8 @@ const NAV = [
   { items: [{ route: "", label: "Dashboard", icon: "home", view: renderDashboard }] },
   { label: "Content", items: [
     { route: "pages", label: "Pages", icon: "pages", view: renderPages },
-    { route: "menu", label: "Menu", icon: "menu", view: soon("Menu", "Choose which pages appear in the sidebar, and in what order.") },
-    { route: "news", label: "News", icon: "news", view: soon("News", "Write, pin and schedule posts for the home page.") }
+    { route: "menu", label: "Menu", icon: "menu", view: renderMenu },
+    { route: "news", label: "News", icon: "news", view: renderNews }
   ]},
   { label: "Lists", items: [
     { route: "store", label: "Store ranks", icon: "store", view: soon("Store ranks", "Ranks, prices, colors and perks.") },
@@ -27,7 +30,7 @@ const NAV = [
   ]},
   { label: "Library", items: [{ route: "media", label: "Media", icon: "image", view: renderMedia }] },
   { label: "Site", items: [
-    { route: "settings", label: "Settings", icon: "settings", view: soon("Settings", "Server name, tagline, Discord link, logos and currency.") },
+    { route: "settings", label: "Settings", icon: "settings", view: renderSettings },
     { route: "history", label: "History", icon: "history", view: soon("History", "See and restore earlier versions of pages and lists.") }
   ]}
 ];

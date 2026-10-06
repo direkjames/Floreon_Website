@@ -192,3 +192,15 @@ export async function removeFromMenu(slug) {
   if (changed) await saveContent("siteNav", next);
   return changed;
 }
+
+/* ---------- news posts ---------- */
+export const listPosts = async () =>
+  must(await sb.from("posts").select("*").order("pinned", { ascending: false }).order("created_at", { ascending: false }));
+export const getPost = async id => must(await sb.from("posts").select("*").eq("id", id).maybeSingle());
+export async function savePost(post) {
+  const row = { title: post.title, body: post.body || "", image_url: post.image_url || null, pinned: !!post.pinned, published: !!post.published };
+  if (post.created_at) row.created_at = post.created_at;
+  if (post.id) { must(await sb.from("posts").update(row).eq("id", post.id)); return post.id; }
+  return must(await sb.from("posts").insert({ ...row, author_name: post.author_name || null }).select().single()).id;
+}
+export const deletePost = async id => must(await sb.from("posts").delete().eq("id", id));
