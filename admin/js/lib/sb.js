@@ -135,3 +135,60 @@ export async function addToLibrary(rows) {
   if (!rows.length) return [];
   return must(await sb.from("media").insert(rows).select());
 }
+
+/* ---------- page builder ---------- */
+export const getPage = async id =>
+  must(await sb.from("pages").select("*").eq("id", id).maybeSingle());
+
+export async function createPage({ title, slug, blocks = [] }) {
+  const sort = Date.now() % 1e9; // new pages go to the end of the list
+  try {
+    return must(await sb.from("pages").insert({ title, slug, description: "", published: false, blocks, sort }).select().single());
+  } catch (e) { throw friendlySlugError(e); }
+}
+
+export async function savePage(id, fields) {
+  try { must(await sb.from("pages").update(fields).eq("id", id)); }
+  catch (e) { throw friendlySlugError(e); }
+}
+
+export const deletePage = async id => must(await sb.from("pages").delete().eq("id", id));
+
+function friendlySlugError(e) {
+  const m = e?.message || "";
+  if (/duplicate key|unique/i.test(m)) return new Error("Another page already uses that address. Pick a different one.");
+  if (/check constraint/i.test(m)) return new Error("The address can only use lowercase letters, numbers, dashes, and / between parts.");
+  return e;
+}
+
+// Earlier saved versions of one page, newest first
+export const pageVersions = async id =>
+  must(await sb.from("edit_history").select("id, changed_at, action, snapshot").eq("item_type", "page").eq("item_key", id).order("changed_at", { ascending: false }).limit(30));
+
+// When a page's address changes, update the menu so its link keeps working
+export async function renameInMenu(oldSlug, newSlug) {
+  const nav = await getContent("siteNav");
+  if (!Array.isArray(nav)) return false;
+  let changed = false;
+  const walk = items => items.forEach(it => {
+    if (it.type === "page" && it.slug === oldSlug) { it.slug = newSlug; changed = true; }
+    if (Array.isArray(it.children)) walk(it.children);
+  });
+  walk(nav);
+  if (changed) await saveContent("siteNav", nav);
+  return changed;
+}
+
+export async function removeFromMenu(slug) {
+  const nav = await getContent("siteNav");
+  if (!Array.isArray(nav)) return false;
+  let changed = false;
+  const prune = items => items.filter(it => {
+    if (it.type === "page" && it.slug === slug) { changed = true; return false; }
+    if (Array.isArray(it.children)) it.children = prune(it.children);
+    return true;
+  });
+  const next = prune(nav);
+  if (changed) await saveContent("siteNav", next);
+  return changed;
+}

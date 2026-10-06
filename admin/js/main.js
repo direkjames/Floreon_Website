@@ -1,11 +1,12 @@
 // Admin site entry point: login check, sidebar, and switching between screens (#/media, #/pages, ...).
-import { $, $$, html, raw, list, icon, toast, errText } from "./lib/ui.js";
+import { $, $$, html, raw, list, icon, toast, errText, hasUnsaved, clearLeaveGuard, confirmDialog } from "./lib/ui.js";
 import { sb, currentStaff, signOut } from "./lib/sb.js";
 import { PUBLIC_SITE } from "./config.js";
 import { renderLogin } from "./views/login.js";
 import { renderDashboard } from "./views/dashboard.js";
 import { renderMedia } from "./views/media.js";
 import { renderSoon } from "./views/soon.js";
+import { renderPages } from "./views/pages.js";
 
 const soon = (title, text) => root => renderSoon(root, { title, text });
 
@@ -13,7 +14,7 @@ const soon = (title, text) => root => renderSoon(root, { title, text });
 const NAV = [
   { items: [{ route: "", label: "Dashboard", icon: "home", view: renderDashboard }] },
   { label: "Content", items: [
-    { route: "pages", label: "Pages", icon: "pages", view: soon("Pages", "Create pages and build them from blocks.") },
+    { route: "pages", label: "Pages", icon: "pages", view: renderPages },
     { route: "menu", label: "Menu", icon: "menu", view: soon("Menu", "Choose which pages appear in the sidebar, and in what order.") },
     { route: "news", label: "News", icon: "news", view: soon("News", "Write, pin and schedule posts for the home page.") }
   ]},
@@ -61,22 +62,35 @@ function shell() {
         <main class="main" id="view" tabindex="-1"></main>
       </div>
     </div>`;
-  $("#logout").addEventListener("click", async () => { await signOut(); staff = null; location.hash = "#/"; start(); });
+  $("#logout").addEventListener("click", async () => {
+    if (hasUnsaved() && !await confirmDialog("Log out without saving?", "Your changes on this page haven't been saved yet.", { yes: "Log out" })) return;
+    clearLeaveGuard(); await signOut(); staff = null; location.hash = "#/"; start();
+  });
   const setMenu = open => { document.body.classList.toggle("menu-open", open); $("#menuBtn").setAttribute("aria-expanded", open); };
   $("#menuBtn").addEventListener("click", () => setMenu(!document.body.classList.contains("menu-open")));
   $("#scrim").addEventListener("click", () => setMenu(false));
 }
 
+let currentHash = location.hash, ignoreNext = false;
 async function route() {
   if (!staff) return;
+  if (ignoreNext) { ignoreNext = false; return; }
+  if (location.hash !== currentHash && hasUnsaved()) {
+    const leave = await confirmDialog("Leave without saving?", "Your changes on this page haven't been saved yet.", { yes: "Leave", danger: true });
+    if (!leave) { ignoreNext = true; location.hash = currentHash; return; }
+  }
+  currentHash = location.hash;
+  clearLeaveGuard();
+  $("#view")?.dispatchEvent(new Event("view:leave"));
   const path = location.hash.replace(/^#\/?/, "");
   const top = path.split("/")[0];
   const r = ROUTES.find(x => x.route === top) || ROUTES[0];
   $$("#side .nav a").forEach(a => a.classList.toggle("active", a.dataset.route === r.route));
   document.title = `${r.label} – Floreon staff`;
   document.body.classList.remove("menu-open");
-  const view = $("#view");
-  view.innerHTML = "";
+  const old = $("#view");
+  const view = old.cloneNode(false); // fresh element, so old screens' listeners don't pile up
+  old.replaceWith(view);
   window.scrollTo(0, 0);
   try { await r.view(view, { staff, path }); }
   catch (e) { console.error(e); view.innerHTML = html`<div class="panel"><h1>Something went wrong</h1><p>${errText(e)}</p><p>Reload the page to try again.</p></div>`; }

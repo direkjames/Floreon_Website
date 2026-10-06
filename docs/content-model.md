@@ -32,6 +32,8 @@ All data lives in Supabase:
 Every block is an object with a unique `id` (short random string) and a `type`.
 Optional on every block: `anchor` (lets links like `/#whitelist` jump to it), `hidden` (true = skip it without deleting).
 
+The admin site's block catalog lives in `admin/js/lib/blocks.js`; keep it in step with this table.
+
 Text fields marked **HTML** allow simple formatting (`<p> <strong> <em> <a> <ul> <ol> <li> <code> <br> <img>`). The public site cleans them with DOMPurify.
 
 | type | Fields | Renders as |
@@ -41,13 +43,13 @@ Text fields marked **HTML** allow simple formatting (`<p> <strong> <em> <a> <ul>
 | `text` | `html` (**HTML**), `card` (bool: put it in a white card) | Rich text |
 | `image` | `url`, `alt`, `caption`, `size` (`normal`/`wide`/`full`) | One picture |
 | `gallery` | `images`: `[{ url, alt, caption }]` | Picture grid with zoom |
-| `cards` | `style` (`flowers`/`links`), `search` (bool), `items`: `[{ name, text, chips[], url, color }]` | Feature cards (`flowers`) or gamemode link cards (`links`) |
+| `cards` | `style` (`flowers`/`links`), `search` (bool), `items`: `[{ name, text, chips[], url, color (sakura/dahlia/hibiscus/moss) }]` | Feature cards (`flowers`) or gamemode link cards (`links`) |
 | `steps` | `items`: `[{ title, text (HTML) }]` | Numbered steps |
 | `faq` | `search` (bool), `items`: `[{ q, a (HTML) }]` | Fold-out questions |
 | `tables` | `columns` (header labels), `tables`: `[{ name, rows: [[cell, cell]] }]` | Tables side by side (e.g. the series guide) |
 | `buttons` | `align`, `items`: `[{ label, url, style (primary/ghost), discord (bool: use the Discord link from settings) }]` | Row of buttons |
 | `rules` | `items`: `[{ title, text (HTML) }]` | Numbered rule list |
-| `votes` | `items`: `[{ name, reward, url }]` | Vote site cards |
+| `votes` | `items`: `[{ name, reward, url }]` (empty `url` = not ready yet) | Vote site cards |
 | `news` | `limit` (posts shown before "Show older") | Latest news posts |
 | `team` | none, uses `siteTeam` | Team members by row |
 | `store` | `note`, `title`, `lead`, uses `sitePlans` + `sitePayments` | Rank cards, buy popup, payment chips |

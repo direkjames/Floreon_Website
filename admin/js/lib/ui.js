@@ -46,6 +46,14 @@ export function debounce(fn, ms = 200) {
   let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); };
 }
 
+/* ---------- unsaved-changes guard ----------
+   An editor calls setLeaveGuard(() => hasUnsavedChanges). main.js asks before leaving. */
+let leaveGuard = null;
+export const setLeaveGuard = fn => { leaveGuard = fn; };
+export const hasUnsaved = () => !!(leaveGuard && leaveGuard());
+export const clearLeaveGuard = () => { leaveGuard = null; };
+window.addEventListener("beforeunload", e => { if (hasUnsaved()) { e.preventDefault(); e.returnValue = ""; } });
+
 /* ---------- toast ---------- */
 let toastTimer;
 export function toast(msg, kind = "ok") {
@@ -91,6 +99,21 @@ export const confirmDialog = (title, text, { yes = "Delete", danger = true } = {
   dialog({ title, body: html`<p>${text}</p>`, actions: [
     { label: "Cancel", value: false }, { label: yes, value: true, primary: true, danger }
   ]}).then(Boolean);
+
+// Ask for one value. Resolves with the trimmed text, or null if cancelled.
+export async function promptDialog(title, label, { value = "", placeholder = "", yes = "OK" } = {}) {
+  let input;
+  const res = await dialog({
+    title, body: html`<label>${label}<input id="promptIn" value="${value}" placeholder="${placeholder}" autofocus></label>`,
+    actions: [{ label: "Cancel", value: null }, { label: yes, value: "ok", primary: true }],
+    onOpen: ({ el }) => {
+      input = el.querySelector("#promptIn");
+      input.addEventListener("keydown", ev => { if (ev.key === "Enter") { ev.preventDefault(); el.querySelector("footer .btn:not(.ghost)").click(); } });
+      setTimeout(() => input.select(), 0);
+    }
+  });
+  return res === "ok" ? input.value.trim() : null;
+}
 
 /* ---------- icons (simple line icons) ---------- */
 const ICONS = {
