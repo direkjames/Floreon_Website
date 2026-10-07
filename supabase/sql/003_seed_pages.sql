@@ -7,7 +7,7 @@
 
 -- ---------- settings + menu ----------
 insert into public.content (key, data) values
-  ('siteSettings', $floreon${"serverName":"Floreon","tagline":"A cozy Minecraft community for building, exploring, and making friends.","discordURL":"https://discord.gg/WmRzBww3hh","currency":"₱","logo":"/images/floreon-logo.webp","wordLogo":"/images/floreon-word.webp","heroInterval":6000,"footer":"Not affiliated with Mojang or Microsoft."}$floreon$::jsonb),
+  ('siteSettings', $floreon${"serverName":"Floreon","tagline":"A cozy Minecraft community for building, exploring, and making friends.","discordURL":"https://discord.gg/WmRzBww3hh","currency":"₱","logo":"/images/floreon-logo.webp","wordLogo":"/images/floreon-word.webp","heroInterval":6000,"copyrightOwner":"Complex Gaming","copyrightStart":2016,"disclaimer":"We are not affiliated with Mojang AB.","tiktokURL":"","youtubeURL":"","facebookURL":"","instagramURL":"","xURL":"","showDiscordInFooter":false}$floreon$::jsonb),
   ('siteNav', $floreon$[{"type":"page","slug":"home","label":"Home","icon":"home"},{"type":"group","label":"Cozymon","icon":"ball","children":[{"type":"page","slug":"cozymon","label":"About"},{"type":"page","slug":"cozymon/features","label":"Features"},{"type":"page","slug":"cozymon/faq","label":"FAQs"},{"type":"page","slug":"cozymon/spawns","label":"Spawns"},{"type":"page","slug":"cozymon/legendaries","label":"Legendaries"}]},{"type":"page","slug":"rules","label":"Rules","icon":"rules"},{"type":"page","slug":"vote","label":"Vote","icon":"heart"},{"type":"link","label":"Discord","icon":"chat","url":"discord"},{"type":"page","slug":"store","label":"Store","icon":"bag"}]$floreon$::jsonb)
 on conflict (key) do nothing;
 

@@ -42,7 +42,13 @@ const ICONS = {
   users: '<circle cx="9" cy="8" r="3.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M21 20c0-2.8-1.7-5-4-5.7"/>',
   search: '<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/>',
   chev: '<path d="M6 9l6 6 6-6"/>',
-  ext: '<path d="M7 17L17 7M8 7h9v9"/>'
+  ext: '<path d="M7 17L17 7M8 7h9v9"/>',
+  // simple drawings of the social apps, in the same line style as the other icons
+  tiktok: '<path d="M14 3v11.5a3.5 3.5 0 1 1-3.5-3.5"/><path d="M14 3c.5 2.6 2.4 4.4 5 4.6"/>',
+  youtube: '<rect x="2.5" y="5.5" width="19" height="13" rx="4"/><path d="M10 9.5v5l4.5-2.5z" fill="currentColor"/>',
+  facebook: '<path d="M14 21v-7.5h3l.5-3.5H14V8c0-1 .4-1.7 1.8-1.7H18V3.2A20 20 0 0 0 15.3 3C12.8 3 11 4.5 11 7.3V10H8v3.5h3V21"/>',
+  instagram: '<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.5 6.5h.01"/>',
+  x: '<path d="M4 4h4.5L20 20h-4.5z"/><path d="M20 4l-6.8 7.6M4 20l6.8-7.6"/>'
 };
 export const icon = (name, cls = "") =>
   `<svg class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ICONS.info}</svg>`;

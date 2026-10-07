@@ -64,7 +64,7 @@ function drawShell() {
   const st = S.settings;
   $$("[data-server-name]").forEach(el => el.textContent = st.serverName || "Floreon");
   $$(".brand-mark").forEach(img => { img.src = safeUrl(st.logo, "/images/floreon-logo.webp"); img.hidden = false; });
-  $("#footerText").textContent = st.footer || "";
+  drawFooter(st);
   const item = it => {
     const href = it.type === "page" ? pathFor(it.slug) : resolveLink(it.url, false, { settings: st });
     const ext = it.type === "link" && /^https?:\/\//i.test(href) && !href.startsWith(location.origin);
@@ -76,6 +76,26 @@ function drawShell() {
       <button class="nav-parent" type="button" aria-expanded="false">${icon(it.icon || "star")}${esc(it.label)}${icon("chev", "chev")}</button>
       <div class="subnav">${(it.children || []).map(item).join("")}</div>
     </div>` : item(it)).join("");
+}
+
+// Footer: copyright (the end year updates by itself), disclaimer, social buttons
+const SOCIALS = [["tiktokURL", "tiktok", "TikTok"], ["youtubeURL", "youtube", "YouTube"], ["facebookURL", "facebook", "Facebook"],
+  ["instagramURL", "instagram", "Instagram"], ["xURL", "x", "X"]];
+function drawFooter(st) {
+  const year = new Date().getFullYear(), start = parseInt(st.copyrightStart, 10);
+  const years = start && start < year ? `${start}-${year}` : `${year}`;
+  const name = st.serverName || "Floreon";
+  const links = SOCIALS.filter(([k]) => /^https:\/\//i.test(st[k] || "")).map(([k, ic, label]) => [st[k], ic, label]);
+  if (st.showDiscordInFooter && st.discordURL) links.push([st.discordURL, "chat", "Discord"]);
+  $("#siteFooter").innerHTML = `
+    <div class="footer-inner">
+      <div class="footer-text">
+        <p>${esc(st.copyrightOwner || name)} &copy; ${years}. All Rights Reserved.</p>
+        ${st.disclaimer ? `<p>${esc(st.disclaimer)}</p>` : ""}
+      </div>
+      ${links.length ? `<nav class="socials" aria-label="${esc(name)} on social media">${links.map(([url, ic, label]) =>
+        `<a href="${esc(url)}" target="_blank" rel="noopener" aria-label="${esc(name)} on ${label}" title="${label}">${icon(ic)}</a>`).join("")}</nav>` : ""}
+    </div>`;
 }
 
 function markActive(slug) {

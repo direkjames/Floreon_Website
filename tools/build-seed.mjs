@@ -160,7 +160,11 @@ const SETTINGS = {
   logo: "/images/floreon-logo.webp",
   wordLogo: "/images/floreon-word.webp",
   heroInterval: CONFIG.heroInterval || 6000,
-  footer: "Not affiliated with Mojang or Microsoft."
+  copyrightOwner: "Complex Gaming",
+  copyrightStart: 2016,
+  disclaimer: "We are not affiliated with Mojang AB.",
+  tiktokURL: "", youtubeURL: "", facebookURL: "", instagramURL: "", xURL: "",
+  showDiscordInFooter: false
 };
 
 const NAV = [
